@@ -1,0 +1,29 @@
+mod PEG-SOLITAIRE-FIJA is
+
+    sort Ficha .
+    ops o x : -> Ficha .
+
+    sort ListaFichas .
+    sort Board .
+
+    subsorts Ficha < ListaFichas < Board .
+
+    op nil -> ListaFichas . 
+    op __ : ListaFichas ListaFichas -> ListaFichas [assoc]. 
+
+    op nilL -> Board . 
+    op , : Board Board -> Board [assoc] . 
+
+    op inicial -> Board . 
+    eq inicial = {
+        (o o o o),
+        (o o o o),
+        (o o o x),
+        (o o o o)
+    } .
+
+    * rules (transitions) for game moves
+    --- rl [oJumpsRight] : o o x => x x o .
+    --- rl [oJumpsLeft] : x o o => o x x .
+
+endm
