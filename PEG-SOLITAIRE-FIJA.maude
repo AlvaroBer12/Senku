@@ -1,29 +1,90 @@
-mod PEG-SOLITAIRE-FIJA is
+mod FICHA-SOLITAIRE-FIJA is
+    protecting NAT .
 
-    sort Ficha .
-    ops o x : -> Ficha .
+    sort Ficha ListaFichas Board .
+    subsort Ficha < ListaFichas < Board .
 
-    sort ListaFichas .
-    sort Board .
+    ops x o : -> Ficha [ctor] .
 
-    subsorts Ficha < ListaFichas < Board .
+    op nil : -> ListaFichas [ctor] .
+    op __ : ListaFichas ListaFichas -> ListaFichas [assoc id: nil] .
+    
+    op nilL : -> Board [ctor] .
+    op _,_ : Board Board -> Board [assoc id: nilL] .
 
-    op nil -> ListaFichas . 
-    op __ : ListaFichas ListaFichas -> ListaFichas [assoc]. 
+    var F : Ficha .
+    var L : ListaFichas .
+    var B : Board .
 
-    op nilL -> Board . 
-    op , : Board Board -> Board [assoc] . 
+    op countList : ListaFichas -> Nat .
+    eq countList (x) = 1 .
+    eq countList (o) = 0 .
+    eq countList (F L) = countList(F) + countList(L) .
 
-    op inicial -> Board . 
-    eq inicial = {
-        (o o o o),
-        (o o o o),
-        (o o o x),
-        (o o o o)
-    } .
+    op count : Board -> Nat .
+    eq count (L) = countList(L) .
+    eq count (L , B) = countList(L) + count(B) .
 
-    * rules (transitions) for game moves
-    --- rl [oJumpsRight] : o o x => x x o .
-    --- rl [oJumpsLeft] : x o o => o x x .
+    op size : ListaFichas -> Nat .
+    eq size(F) = 1 .
+    eq size (F L) = s size(L) .
 
+    vars c x1 y1 i : Nat .
+
+    ---op createCell : Nat Nat Nat -> Ficha .
+    ---eq createCell(i, s 0 , i) = o .
+    ---eq createCell(x1, y1, i) = x .
+
+    op createCell : Nat Nat Nat -> Ficha .
+    eq createCell(x1, y1, i) = if x1 == i then o else x fi .
+
+    op createRow : Nat Nat Nat Nat -> Board .
+    eq createRow(0, x1, y1, i) = nilL .
+    eq createRow(s c, x1, y1, i) = (createCell(x1, y1, i)), createRow(c, x1, y1, i) .
+
+    op createBoard : Nat Nat Nat Nat -> Board .
+    eq createBoard(0, x1, y1, i) = nilL .
+    eq createBoard(s c, x1, y1, i) = createRow(s c, x1, y1, i) , createBoard(c, x1, y1, s i) .
+
+    op initial : Nat Nat Nat -> Board .
+    eq initial(c, x1, y1) = createBoard(c, x1, y1, s 0) .
+
+    op four : -> Board .
+    eq four = (
+        (x x x x),
+        (x x x x),
+        (x x x o),
+        (x x x x)
+    ) .
+
+    op five : -> Board .
+    eq five = (
+        (x x x x x),
+        (x x x x x),
+        (x x x o x),
+        (x x x x x),
+        (x x x x x)
+    ) .
+
+    vars v1 v2 v3 v1' v2' v3' : ListaFichas .
+    rl [right] : x x o => o o x .
+    rl [left] : o x x => x o o .
+    crl [down] :
+        (v1 x v1'),
+        (v2 x v2'),
+        (v3 o v3')
+        =>
+        (v1 o v1'),
+        (v2 o v2'),
+        (v3 x v3')
+        if size(v1) == size(v2) /\ size(v2) == size(v3) .
+    crl [up] :
+        (v1 o v1'),
+        (v2 x v2'),
+        (v3 x v3')
+        =>
+        (v1 x v1'),
+        (v2 o v2'),
+        (v3 o v3')
+        if size(v1) == size(v2) /\ size(v2) == size(v3) .
 endm

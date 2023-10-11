@@ -1,0 +1,41 @@
+load PEG-SOLITAIRE-OBJETOS.maude .
+
+mod TRIANGULAR-PEG-SOLITAIRE is
+    extending PEG-SOLITAIRE-OBJETOS .
+    vars B : Board .
+    vars F C : Nat .
+
+    rl [upRight] : x(s s F, C) x(s F, s C) o(F, s s C) => o(s s F, C) o(s F, s C) x(F, s s C) .
+    rl [downLeft] : o(s s F, C) x(s F, s C) x(F, s s C) => x(s s F, C) o(s F, s C) o(F, s s C) .
+
+    op triangular : -> Board .
+    eq triangular = o(0,0) x(0,1) x(0,2) x(0,3) x(0,4)
+                    x(1,0) x(1,1) x(1,2) x(1,3)
+                    x(2,0) x(2,1) x(2,2)
+                    x(3,0) x(3,1)
+                    x(4,0) .
+
+    op four : -> Board .
+    eq four = o(0,0) x(0,1) x(0,2) x(0,3)
+              x(1,0) x(1,1) x(1,2)
+              x(2,0) x(2,1)
+              x(3,0) .
+
+    op seis : -> Board .
+    eq seis = o(0,0) x(0,1) x(0,2) x(0,3) x(0,4) x(0,5)
+              x(1,0) x(1,1) x(1,2) x(1,3) x(1,4)
+              x(2,0) x(2,1) x(2,2) x(2,3)
+              x(3,0) x(3,1) x(3,2)
+              x(4,0) x(4,1)
+              x(5,0) .
+
+    op ocho : -> Board .
+    eq ocho = o(0,0) x(0,1) x(0,2) x(0,3) x(0,4) x(0,5) x(0,6) x(0,7)
+              x(1,0) x(1,1) x(1,2) x(1,3) x(1,4) x(1,5) x(1,6)
+              x(2,0) x(2,1) x(2,2) x(2,3) x(2,4) x(2,5)
+              x(3,0) x(3,1) x(3,2) x(3,3) x(3,4)
+              x(4,0) x(4,1) x(4,2) x(4,3)
+              x(5,0) x(5,1) x(5,2)
+              x(6,0) x(6,1)
+              x(7,0) .
+endm
