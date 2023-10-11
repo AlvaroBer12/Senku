@@ -7,14 +7,14 @@ mod FICHA-SOLITAIRE-FIJA is
     ops x o : -> Ficha [ctor] .
 
     op nil : -> ListaFichas [ctor] .
-    op __ : ListaFichas ListaFichas -> ListaFichas [assoc id: nil] .
+    op __ : ListaFichas ListaFichas -> ListaFichas [assoc id: nil prec 1] .
     
     op nilL : -> Board [ctor] .
-    op _,_ : Board Board -> Board [assoc id: nilL] .
+    op _,_ : Board Board -> Board [assoc id: nilL prec 2] .
 
     var F : Ficha .
     var L : ListaFichas .
-    var B : Board .
+    vars B T : Board .
 
     op countList : ListaFichas -> Nat .
     eq countList (x) = 1 .
@@ -29,25 +29,26 @@ mod FICHA-SOLITAIRE-FIJA is
     eq size(F) = 1 .
     eq size (F L) = s size(L) .
 
-    vars c x1 y1 i : Nat .
+    vars c x1 y1 i p : Nat .
 
-    ---op createCell : Nat Nat Nat -> Ficha .
-    ---eq createCell(i, s 0 , i) = o .
-    ---eq createCell(x1, y1, i) = x .
+    op createRow : Nat Nat -> ListaFichas .
+    eq createRow(c, p) = if p > c then nil else x createRow(c, s p) fi .
 
-    op createCell : Nat Nat Nat -> Ficha .
-    eq createCell(x1, y1, i) = if x1 == i then o else x fi .
+    op createBoard : Nat Nat -> Board .
+    eq createBoard(c, i) = if i > c then nilL else (createRow(c, 1)) , ( createBoard(c, s i) ) fi .
+   
+    op initial : Nat -> Board .
+    eq initial(c) = createBoard(c, 1) .
 
-    op createRow : Nat Nat Nat Nat -> Board .
-    eq createRow(0, x1, y1, i) = nilL .
-    eq createRow(s c, x1, y1, i) = (createCell(x1, y1, i)), createRow(c, x1, y1, i) .
+    op placeLibre : Nat Nat Nat -> ListaFichas .
+    eq placeLibre(c, y1, p) = if p > c then nil else (if p == y1 then o placeLibre(c, y1, s p) else x placeLibre(c, y1, s p) fi ) fi .
 
-    op createBoard : Nat Nat Nat Nat -> Board .
-    eq createBoard(0, x1, y1, i) = nilL .
-    eq createBoard(s c, x1, y1, i) = createRow(s c, x1, y1, i) , createBoard(c, x1, y1, s i) .
+    op searchLibre : Board Nat Nat Nat -> Board .
+    eq searchLibre(nilL, x1, y1, i) = nilL .
+    eq searchLibre((L , B), x1, y1, i) = if i == x1 then ( placeLibre(countList(L), y1, 1) , B ) else ( L , searchLibre(B, x1, y1, s i) ) fi .
 
-    op initial : Nat Nat Nat -> Board .
-    eq initial(c, x1, y1) = createBoard(c, x1, y1, s 0) .
+    op libre : Board Nat Nat -> Board .
+    eq libre (B, x1, y1) = searchLibre(B, x1, y1, 1) .  
 
     op four : -> Board .
     eq four = (
