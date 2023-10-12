@@ -29,23 +29,23 @@ mod FICHA-SOLITAIRE-FIJA is
     eq size(F) = 1 .
     eq size (F L) = s size(L) .
 
-    vars c x1 y1 i p : Nat .
+    vars rows columns x1 y1 auxRows auxColumns : Nat .
 
     op createRow : Nat Nat -> ListaFichas .
-    eq createRow(c, p) = if p > c then nil else x createRow(c, s p) fi .
+    eq createRow(columns, auxColumns) = if auxColumns > columns then nil else x createRow(columns, s auxColumns) fi .
 
-    op createBoard : Nat Nat -> Board .
-    eq createBoard(c, i) = if i > c then nilL else (createRow(c, 1)) , ( createBoard(c, s i) ) fi .
+    op createBoard : Nat Nat Nat -> Board .
+    eq createBoard(rows, columns, auxRows) = if auxRows > rows then nilL else (createRow(columns, 1)) , ( createBoard(rows, columns, s auxRows) ) fi .
    
-    op initial : Nat -> Board .
-    eq initial(c) = createBoard(c, 1) .
+    op initial : Nat Nat -> Board .
+    eq initial(rows,columns) = createBoard(rows, columns, 1) .
 
     op placeLibre : Nat Nat Nat -> ListaFichas .
-    eq placeLibre(c, y1, p) = if p > c then nil else (if p == y1 then o placeLibre(c, y1, s p) else x placeLibre(c, y1, s p) fi ) fi .
+    eq placeLibre(columns, y1, auxColumns) = if auxColumns > columns then nil else (if auxColumns == y1 then o placeLibre(columns, y1, s auxColumns) else x placeLibre(columns, y1, s auxColumns) fi ) fi .
 
     op searchLibre : Board Nat Nat Nat -> Board .
-    eq searchLibre(nilL, x1, y1, i) = nilL .
-    eq searchLibre((L , B), x1, y1, i) = if i == x1 then ( placeLibre(countList(L), y1, 1) , B ) else ( L , searchLibre(B, x1, y1, s i) ) fi .
+    eq searchLibre(nilL, x1, y1, auxRows) = nilL .
+    eq searchLibre((L , B), x1, y1, auxRows) = if auxRows == x1 then ( placeLibre(countList(L), y1, 1) , B ) else ( L , searchLibre(B, x1, y1, s auxRows) ) fi .
 
     op libre : Board Nat Nat -> Board .
     eq libre (B, x1, y1) = searchLibre(B, x1, y1, 1) .  
