@@ -6,7 +6,8 @@ mod PEG-SOLITAIRE-OBJETOS is
 
     ops x o : Nat Nat -> Ficha [ctor] .
 
-    op __ : Board Board -> Board [assoc comm ctor] .
+    op nilL : -> Board [ctor] .
+    op __ : Board Board -> Board [assoc ctor id: nilL] .
 
     var B B2 : Board .
     vars N M : Nat .
@@ -15,6 +16,24 @@ mod PEG-SOLITAIRE-OBJETOS is
     eq count(x(N,M)) = 1 .
     eq count(o(N,M)) = 0 .
     eq count(B B2) = count(B) + count(B2) .
+
+    vars rows columns x1 y1 auxRows auxColumns : Nat .
+    
+    op createRow : Nat Nat Nat -> Board .
+    eq createRow(auxRows,columns, auxColumns) = if auxColumns == columns then x(auxRows,auxColumns) else x(auxRows,auxColumns) createRow(auxRows, columns, s auxColumns) fi .
+
+    op createBoard : Nat Nat Nat -> Board .
+    eq createBoard(rows, columns, auxRows) = if auxRows == rows then (createRow(auxRows,columns, 1)) else (createRow(auxRows,columns, 1)) ( createBoard(rows, columns, s auxRows) ) fi .
+
+    op initial : Nat Nat -> Board .
+    eq initial(rows,columns) = createBoard(rows, columns, 1) .
+
+    op searchLibre : Board Nat Nat -> Board .
+    eq searchLibre(nilL, x1, y1) = nilL .
+    eq searchLibre((x(N,M) B2), x1, y1) = if N == x1 and M == y1 then o(N,M) B2 else x(N,M) searchLibre(B2, x1, y1) fi .
+
+    op libre : Board Nat Nat -> Board .
+    eq libre (B, x1, y1) = searchLibre(B, x1, y1) .  
 
     op four : -> Board .
     eq four = x(0,0) x(0,1) x(0,2) x(0,3)
