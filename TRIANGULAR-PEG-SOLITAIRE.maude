@@ -1,3 +1,7 @@
+---Authors:
+---Alvaro Bermudez Gamez
+---Aryan Dilip Sadhwani Sadhwani
+
 load PEG-SOLITAIRE-FIJA.maude .
 
 mod TRIANGULAR-PEG-SOLITAIRE is
