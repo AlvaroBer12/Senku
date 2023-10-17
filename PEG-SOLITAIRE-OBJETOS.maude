@@ -65,3 +65,8 @@ omod PEG-SOLITAIRE-OBJETOS is
     rl [up] : < y : Libre | x : M, y : N > < t : Ficha | x : s M , y : N > < r : Ficha | x : s s M , y : N >
     => < y : Ficha | x : M, y : N > < t : Libre | x : s M , y : N > < r : Libre | x : s s M , y : N > .
 endom
+
+
+eof 
+
+Maude> search libre(initial(4, 4), 3, 4) =>* C such that count(C) = 1 .
