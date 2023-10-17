@@ -1,41 +1,57 @@
 load PEG-SOLITAIRE-FIJA.maude .
 
 mod TRIANGULAR-PEG-SOLITAIRE is
-    extending PEG-SOLITAIRE-FIJA .
-    vars B : Board .
-    vars F C : Nat .
+    extending FICHA-SOLITAIRE-FIJA .
+    var B : Board .
+    vars M N : Nat .
 
-    rl [upRight] : x(s s F, C) x(s F, s C) o(F, s s C) => o(s s F, C) o(s F, s C) x(F, s s C) .
-    rl [downLeft] : o(s s F, C) x(s F, s C) x(F, s s C) => x(s s F, C) o(s F, s C) o(F, s s C) .
+    op createRow : Nat -> ListaFichas .
+    eq createRow(0) = nil .
+    eq createRow(s M) = x createRow(M) .
 
-    op triangular : -> Board .
-    eq triangular = (o x x x x),
-                    (x x x x),
-                    (x x x),
-                    (x x),
-                    (x) .
+    op initial : Nat -> Board .
+    eq initial(0) = nilL .
+    eq initial(s M) = createRow(s M) , initial(M) .
 
-    op four : -> Board .
-    eq four = o(0,0) x(0,1) x(0,2) x(0,3)
-              x(1,0) x(1,1) x(1,2)
-              x(2,0) x(2,1)
-              x(3,0) .
+    vars v1 v2 v3 v1' v2' v3' : ListaFichas .
 
-    op seis : -> Board .
-    eq seis = o(0,0) x(0,1) x(0,2) x(0,3) x(0,4) x(0,5)
-              x(1,0) x(1,1) x(1,2) x(1,3) x(1,4)
-              x(2,0) x(2,1) x(2,2) x(2,3)
-              x(3,0) x(3,1) x(3,2)
-              x(4,0) x(4,1)
-              x(5,0) .
-
-    op ocho : -> Board .
-    eq ocho = o(0,0) x(0,1) x(0,2) x(0,3) x(0,4) x(0,5) x(0,6) x(0,7)
-              x(1,0) x(1,1) x(1,2) x(1,3) x(1,4) x(1,5) x(1,6)
-              x(2,0) x(2,1) x(2,2) x(2,3) x(2,4) x(2,5)
-              x(3,0) x(3,1) x(3,2) x(3,3) x(3,4)
-              x(4,0) x(4,1) x(4,2) x(4,3)
-              x(5,0) x(5,1) x(5,2)
-              x(6,0) x(6,1)
-              x(7,0) .
+    crl [diagonalUpRight] : 
+        (v1 o v1'),
+        (v2 x v2'),
+        (v3 x v3')
+        =>
+        (v1 x v1'),
+        (v2 o v2'),
+        (v3 o v3')
+        if size(v1') == size(v2') /\ size(v2') == size(v3') .
+    
+    crl [diagonalDownRight] : 
+        (v1 x v1'),
+        (v2 x v2'),
+        (v3 o v3')
+        =>
+        (v1 o v1'),
+        (v2 o v2'),
+        (v3 x v3')
+        if size(v1) == ( size(v2) + s 0 ) /\ size(v2) == ( size(v3) + s 0 ) .
+    
+    crl [diagonalUpLeft] : 
+        (v1 o v1'),
+        (v2 x v2'),
+        (v3 x v3')
+        =>
+        (v1 x v1'),
+        (v2 o v2'),
+        (v3 o v3')
+        if size(v1) == ( size(v2) + s 0 ) /\ size(v2) == ( size(v3) + s 0 ) .
+    
+    crl [diagonalDownLeft] : 
+        (v1 x v1'),
+        (v2 x v2'),
+        (v3 o v3')
+        =>
+        (v1 o v1'),
+        (v2 o v2'),
+        (v3 x v3')
+        if size(v1') == size(v2') /\ size(v2') == size(v3') .
 endm

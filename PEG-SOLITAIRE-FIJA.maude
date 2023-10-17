@@ -50,23 +50,6 @@ mod FICHA-SOLITAIRE-FIJA is
     op libre : Board Nat Nat -> Board .
     eq libre (B, x1, y1) = searchLibre(B, x1, y1, 1) .  
 
-    op four : -> Board .
-    eq four = (
-        (x x x x),
-        (x x x x),
-        (x x x o),
-        (x x x x)
-    ) .
-
-    op five : -> Board .
-    eq five = (
-        (x x x x x),
-        (x x x x x),
-        (x x x o x),
-        (x x x x x),
-        (x x x x x)
-    ) .
-
     vars v1 v2 v3 v1' v2' v3' : ListaFichas .
     rl [right] : x x o => o o x .
     rl [left] : o x x => x o o .
