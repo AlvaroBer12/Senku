@@ -1,55 +1,63 @@
-mod PEG-SOLITAIRE-OBJETOS is
-    protecting NAT .
+omod PEG-SOLITAIRE-OBJETOS is
+    including NAT .
 
-    sort Board Ficha .
-    subsort Ficha < Board .
+    class Ficha | x : Nat, y : Nat .
 
-    ops x o : Nat Nat -> Ficha [ctor] .
+    class Libre | x : Nat, y : Nat .
 
-    op nilL : -> Board [ctor] .
-    op __ : Board Board -> Board [assoc ctor id: nilL] .
+    subsort Nat < Oid .
 
-    var B B2 : Board .
-    vars N M : Nat .
+    vars M N x1 y1 z : Nat .
+    vars C C1 : Configuration .
+    var O : Object .
 
-    op count : Board -> Nat .
-    eq count(x(N,M)) = 1 .
-    eq count(o(N,M)) = 0 .
-    eq count(B B2) = count(B) + count(B2) .
+    op countOid : Cid -> Nat .
+    eq countOid(Ficha) = s 0 .
+    eq countOid(Libre) = 0 .
 
-    vars rows columns x1 y1 auxRows auxColumns : Nat .
-    
-    op createRow : Nat Nat Nat -> Board .
-    eq createRow(auxRows,columns, auxColumns) = if auxColumns == columns then x(auxRows,auxColumns) else x(auxRows,auxColumns) createRow(auxRows, columns, s auxColumns) fi .
+    op count : Configuration -> Nat .
+    eq count(O) = countOid(getClass(O)) .
+    eq count(O C1) = countOid(getClass(O)) + count(C1) .
 
-    op createBoard : Nat Nat Nat -> Board .
-    eq createBoard(rows, columns, auxRows) = if auxRows == rows then (createRow(auxRows,columns, 1)) else (createRow(auxRows,columns, 1)) ( createBoard(rows, columns, s auxRows) ) fi .
+    op indice : Nat Nat -> Nat .
+    eq indice(M, N) = M * N + N .
 
-    op initial : Nat Nat -> Board .
-    eq initial(rows,columns) = createBoard(rows, columns, 1) .
+    vars rows columns auxRows auxColumns : Nat . 
 
-    op searchLibre : Board Nat Nat -> Board .
-    eq searchLibre(nilL, x1, y1) = nilL .
-    eq searchLibre((x(N,M) B2), x1, y1) = if N == x1 and M == y1 then o(N,M) B2 else x(N,M) searchLibre(B2, x1, y1) fi .
+    op createFicha : Nat Nat -> Object .
+    eq createFicha(M, N) = < (indice(M, N)) : Ficha | x : M, y : N > .
 
-    op libre : Board Nat Nat -> Board .
-    eq libre (B, x1, y1) = searchLibre(B, x1, y1) .  
+    op createLibre : Nat Nat -> Object .
+    eq createLibre(M, N) = < (indice(M, N)) : Libre | x : M, y : N > .
 
-    op four : -> Board .
-    eq four = x(0,0) x(0,1) x(0,2) x(0,3)
-              x(1,0) x(1,1) x(1,2) x(1,3)
-              x(2,0) x(2,1) x(2,2) o(2,3)
-              x(3,0) x(3,1) x(3,2) x(3,3) .
+    op createRow : Nat Nat Nat -> Configuration .
+    eq createRow(columns, auxColumns, auxRows) = if auxColumns == columns then createFicha(auxRows, auxColumns)  
+    else createFicha(auxRows, auxColumns) createRow(columns, s auxColumns, auxRows) fi .
 
-    op five : -> Board .
-    eq five = x(0,0) x(0,1) x(0,2) x(0,3) x(0,4)
-              x(1,0) x(1,1) x(1,2) x(1,3) x(1,4)
-              x(2,0) x(2,1) x(2,2) x(2,3) x(2,4)
-              x(3,0) x(3,1) x(3,2) x(3,3) o(3,4)
-              x(4,0) x(4,1) x(4,2) x(4,3) x(4,4) .
+    op createBoard : Nat Nat Nat -> Configuration .
+    eq createBoard(rows, columns, auxRows) = if auxRows == rows then createRow(columns, 1, auxRows) else (createRow(columns, 1, auxRows)) ( createBoard(rows, columns, s auxRows) ) fi .
 
-    rl [right] : x(M,N) x(M, s N) o(M, s s N) => o(M,N) o(M, s N) x(M, s s N) .
-    rl [left] : o(M,N) x(M, s N) x(M, s s N) => x(M,N) o(M, s N) o(M, s s N) .
-    rl [down] : x(M,N) x(s M,N) o(s s M,N) => o(M,N) o(s M,N) x(s s M,N) .
-    rl [up] : o(M,N) x(s M,N) x(s s M,N) => x(M,N) o(s M,N) o(s s M,N) .
-endm
+    op initial : Nat Nat -> Configuration .
+    eq initial(M , N) = createBoard(M , N, 1) .
+
+    op compare : Object Nat Nat -> Bool .
+    eq compare((< z : Ficha | x : x1, y : y1 >), M, N) = if z == indice(M,N) then true else false fi .
+
+    op libre : Configuration Nat Nat  -> Configuration .
+    eq libre(O, M, N) = if compare(O,M,N) == true then createLibre(M,N) else O fi .
+    eq libre((O C1), M, N) = if compare(O,M,N) == true then createLibre(M,N) C1 else O libre(C1, M, N) fi .
+
+    vars y t r : Nat .
+
+    rl [right] : < y : Ficha | x : M, y : N > < t : Ficha | x : M , y : s N > < r : Libre | x : M , y : s s N > 
+    => < y : Libre | x : M, y : N > < t : Libre | x : M , y : s N > < r : Ficha | x : M , y : s s N > .
+
+    rl [left] : < y : Libre | x : M, y : N > < t : Ficha | x : M , y : s N > < r : Ficha | x : M , y : s s N >
+    => < y : Ficha | x : M, y : N > < t : Libre | x : M , y : s N > < r : Libre | x : M , y : s s N > .
+
+    rl [down] : < y : Ficha | x : M, y : N > < t : Ficha | x : s M , y : N > < r : Libre | x : s s M , y : N >
+    => < y : Libre | x : M, y : N > < t : Libre | x : s M , y : N > < r : Ficha | x : s s M , y : N > .
+
+    rl [up] : < y : Libre | x : M, y : N > < t : Ficha | x : s M , y : N > < r : Ficha | x : s s M , y : N >
+    => < y : Ficha | x : M, y : N > < t : Libre | x : s M , y : N > < r : Libre | x : s s M , y : N > .
+endom
