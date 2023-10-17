@@ -76,3 +76,17 @@ mod FICHA-SOLITAIRE-FIJA is
         (v3 o v3')
         if size(v1) == size(v2) /\ size(v2) == size(v3) .
 endm
+
+
+eof
+
+Maude> search libre(initial(4 , 4), 3, 4) =>* B such that count(B) = 1 .
+
+Maude> show path labels 1869 .
+Maude> show path 1869 .
+Maude> show path labels 1870 .
+Maude> show path 1870 .
+
+Maude> search libre(initial(4 , 4), 3, 4) =>! B such that count(B) > 1 .
+
+Maude> search libre(initial(5 , 5), 3, 4) =>* B such that count(B) = 1 .
