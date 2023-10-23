@@ -2,7 +2,7 @@
 ---Alvaro Bermudez Gamez
 ---Aryan Dilip Sadhwani Sadhwani
 
-mod FICHA-SOLITAIRE-FIJA is
+mod PEG-SOLITAIRE-FIJA is
     protecting NAT .
 
     sort Ficha ListaFichas Board .

@@ -5,7 +5,7 @@
 load PEG-SOLITAIRE-FIJA.maude .
 
 mod TRIANGULAR-PEG-SOLITAIRE is
-    extending FICHA-SOLITAIRE-FIJA .
+    extending PEG-SOLITAIRE-FIJA .
     var B : Board .
     vars M N : Nat .
 
