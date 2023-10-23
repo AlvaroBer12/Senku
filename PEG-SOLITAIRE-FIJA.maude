@@ -89,4 +89,10 @@ Maude> show path 1870 .
 
 Maude> search libre(initial(4 , 4), 3, 4) =>! B such that count(B) > 1 .
 
+Maude> search libre(initial(4 , 4), 1, 1) =>* B such that count(B) = 1 .
+
+Maude> search libre(initial(4 , 4), 1, 2) =>* B such that count(B) = 1 .
+
 Maude> search libre(initial(5 , 5), 3, 4) =>* B such that count(B) = 1 .
+
+

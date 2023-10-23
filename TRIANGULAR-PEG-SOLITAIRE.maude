@@ -59,3 +59,7 @@ mod TRIANGULAR-PEG-SOLITAIRE is
         (v3 x v3')
         if size(v1') == size(v2') /\ size(v2') == size(v3') .
 endm
+
+eof
+
+Maude> search libre(initial(5), 2, 2) =>* B such that count(B) = 1 .
